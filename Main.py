@@ -28,8 +28,8 @@ class camel:
     name=""
     position=1
     field=0  
-    def __init__(self,colour1):
-        self.colour= colour1
+    def __init__(self,color1):
+        self.color= color1
         pass
 
     def roll(self):
@@ -44,18 +44,18 @@ class pyramide:
     dyellow =dice ("3","yellow")
     dwhite = dice ("4","white")
     dblack =dice ("5","black")
-    cred = dice("red")
-    cgreen = dice ("green")
-    cyellow =dice ("yellow")
-    cwhite = dice ("white")
-    cblack =dice ("black")
+    c1 = camel("red")
+    c2 = camel ("green") 
+    c3 =camel ("yellow")
+    c4 = camel ("white")
+    c5 =camel ("black")
     camle_list= [cred, cgreen, cyellow, cblack, cwhite]
-    dice_list = [dred, dgreen, dyellow, dblack, dwhite]
+    dice_list = [dred, dgreen, dyellow, dblack, dwhite]   
     Not_pyramide =[]
-    def  __init__(self):
+    def  __init__(self): 
         pass
     def move(self,camel,moves):
-        new_field=camel.field + moves 
+        new_field=camel.field + int(moves) 
         for camle in self.camle_list:
             if camle.field == new_field:
                 camel.position +=1
@@ -64,13 +64,16 @@ class pyramide:
     
     def produce_dice(self):
         current_dice  = random.choice(self.dice_list)
-        print(current_dice.colour)
+        
         self.Not_pyramide.append(current_dice)
+        return current_dice.colour
 
     def take_initial_input (self):
-        camel=input(f"What camle was rolled first?") #camel color
-        roll= input("Roll:")
-        self.move(camel,roll)  
+        for camel in self.camle_list:
+            camel_color=input(f"What camle was rolled?") 
+            roll= input("Roll:")
+            self.move(self.take_color_return_object(camel_color),roll)  
+
     
     def take_color_return_object(self,color):
         match color:
@@ -79,7 +82,7 @@ class pyramide:
             case "green":
                 return self.camle_list[1]
             case "yellow":
-                return self.camle_list[2]
+                return self.camle_list[2] 
             case "white":
                 return self.camle_list[3]
             case "black":
@@ -89,11 +92,38 @@ class pyramide:
         for camel in self.camle_list:
             print(camel.name,"Position:",camel.position, "Color:",camel.color)            
            
-    def change_position (self,camel,poistion):
+    def change_field (self,camel_color,field):
+        self.take_color_return_object(camel_color).field=field  #does not work with  position ignores it 
+    
+    def save_current_position(self):
+        file1 = open("save.txt","r+")
+        for camel in self.camle_list:
+            file1.write(camel.name+"\n")
+            file1.write(camel.position+"\n")
+            file1.write(camel.color+"\n")
+            file1.write(camel.name+"\n")
+            file1.write(camel.field+"\n")
+
+    def load_safe(self):
+        file1 = open("save.txt","r+")
+        for i in 25:
+            c1= camel (file1.readline(1))
+            
+
+    def run(self):
+
+        for i in 5 :
+            self.produce_dice()
+            wurf = random.randint(1-6) 
+            self.move(self.take_color_return_object(self.current_dice.colour()),wurf)
+        self.give_all_poistions()
 
 
-    take_initial_input()
+game =pyramide()
 
-main_Pyramide = pyramide()
+game.take_initial_input()
+game.give_all_poistions()
+
+
 
 
