@@ -1,0 +1,15 @@
+red
+4
+3
+green
+0
+0
+yellow
+0
+0
+white
+0
+0
+black
+0
+0
