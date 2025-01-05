@@ -1,15 +1,5 @@
 
 
-# Soll wahrscheinlichkeit von würfeln aus der Pyramide erechen 
-
-#soll den besten Zug finden
-
-#braucht Input für die würfel
-
-#Spielfeld nachmachen
-
-#input system für das spiel
-
 import random
 import time
 class dice:
@@ -38,9 +28,7 @@ class camel:
         #print (self.wurf)
 
 class pyramide:
-
-    
-    
+ 
     def  __init__(self): 
         self.dred = dice("1","red")
         self.dgreen = dice ("2","green")
@@ -55,35 +43,48 @@ class pyramide:
         self.camle_list= [self.c1, self.c2, self.c3, self.c4, self.c5]
         self.dice_list = [self.dred, self.dgreen, self.dyellow, self.dblack, self.dwhite]   
         self.Not_pyramide =[]
-        pass 
-    def move(self,camel,moves):
 
-        if not camel.position== 0:
-                camels_on_field = [c for c in self.camle_list if c.field == camel.field and camel.position<c.position]
-                new_poition=0
-                new_field=0
-                new_field=camel.field + int(moves) 
-                camels_on_field.sort(key=lambda camel: -camel.position)
-                #print("lul")
-                for i in range(len(camels_on_field)):
-                    
-                    camels_on_field_new = [c for c in self.camle_list if c.field == new_field]
-                    new_poition=len(camels_on_field_new) 
-                    #print ("camle position", len(camels_on_field), camel.color, camel.field)
-                    camels_on_field[i].field = new_field
-                    camels_on_field[i].position= new_poition 
-        else:
-            new_poition=0
-            new_field=0
-            new_field=camel.field + int(moves) 
-            #print("new field", new_field)
-            camels_on_field = [c for c in self.camle_list if c.field == new_field]
-            #print("lol")
-            #print ("camle position", len(camels_on_field), camel.color, camel.field)
-            new_poition=len(camels_on_field) 
-            camel.field = new_field
-            camel.position= new_poition  
-            
+        self.list_plus_one_fields=[]
+        self.list_minus_one_fields=[]
+        pass 
+
+    def move(self,camel,moves):
+        new_field=self.new_field(camel,moves)
+        camels_on_field= self.camels_on_same_field(camel.field)
+        is_minus_field= is_minus_field(new_field)       
+        if is_minus_field :
+            for camel in self.camels_on_same_field(new_field):
+                camels_on_field.append(camel) 
+        self.move_all_camels_to_new_field(camels_on_field,new_field)
+
+    def is_minus_field(self,field):
+        for tested_field in self.list_minus_one_fields:
+            if field == tested_field:
+                return True
+
+    def new_field(self,camel,moves):
+        new_field=camel.field + int(moves) 
+        for field in self.list_plus_one_fields:
+            if new_field == field:
+                new_field+=1
+        for field in self.list_minus_one_fields:
+            if new_field == field:
+                new_field-=1
+        return new_field
+
+    def camels_on_same_field (self,field):
+        camels_on_field = [c for c in self.camle_list if c.field == field ] #and camel.position<c.position
+        camels_on_field.sort(key= camel.position)
+        return camels_on_field
+
+    def move_all_camels_to_new_field(self,list_camels,new_field):
+        new_poition=len(list_camels) 
+        list_camels.sort(key=lambda camel: -camel.position)
+        for i in range(len(list_camels)):          
+            camels_on_field_new = [c for c in self.camle_list if c.field == new_field]
+            new_poition=len(camels_on_field_new) 
+            list_camels[i].field = new_field
+            list_camels[i].position= new_poition        
     
     def produce_dice(self):
         #print("Dice List:", len(self.dice_list))
@@ -136,14 +137,9 @@ class pyramide:
         self.c5= camel (save[12].replace("\n",""),int(save[13]),int(save[14])) 
         self.camle_list= [self.c1, self.c2, self.c3, self.c4, self.c5]
          
-            
-
     def run(self):
-
-
         for dice in range(5) :
             wurf = random.randint(1,3)
-            #print("wurf",wurf)
             self.move(self.take_color_return_object(self.produce_dice()),wurf)
         self.dice_list = [self.dred, self.dgreen, self.dyellow, self.dblack, self.dwhite] 
         #self.give_all_poistions()
@@ -213,7 +209,6 @@ class pyramide:
                 black_5+=1
             
             self.load_safe()
-
         print("Probability of First Place")
         print("Red:",red_1/times,"  yellow:",yellow_1/times," green:",green_1/times,"   white:",white_1/times,"   black:",black_1/times)
         print("Probability of Second Place")
@@ -227,17 +222,11 @@ class pyramide:
 
         end= time.time()
         print("Calculated in",(end-start),"seconds")
-        
 
     def sort_for_best(self): 
         self.camle_list.sort(key=lambda camel: (-camel.field, camel.position))   
-        
-    
-    
-
 
 game =pyramide()
-
 #game.take_initial_input()
 #game.save_current_position()
 #game.load_safe()
