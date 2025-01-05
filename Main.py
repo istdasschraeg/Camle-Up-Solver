@@ -28,7 +28,6 @@ class camel:
         #print (self.wurf)
 
 class pyramide:
- 
     def  __init__(self): 
         self.dred = dice("1","red")
         self.dgreen = dice ("2","green")
@@ -46,21 +45,24 @@ class pyramide:
 
         self.list_plus_one_fields=[]
         self.list_minus_one_fields=[]
+        
         pass 
+ 
 
     def move(self,camel,moves):
         new_field=self.new_field(camel,moves)
         camels_on_field= self.camels_on_same_field(camel.field)
-        is_minus_field= is_minus_field(new_field)       
+        is_minus_field= self.see_if_it_is_minus_field(new_field)       
         if is_minus_field :
             for camel in self.camels_on_same_field(new_field):
                 camels_on_field.append(camel) 
         self.move_all_camels_to_new_field(camels_on_field,new_field)
 
-    def is_minus_field(self,field):
-        for tested_field in self.list_minus_one_fields:
+    def see_if_it_is_minus_field(self,field):
+        for tested_field in self.list_minus_one_fields:   
             if field == tested_field:
                 return True
+        return False
 
     def new_field(self,camel,moves):
         new_field=camel.field + int(moves) 
@@ -74,7 +76,7 @@ class pyramide:
 
     def camels_on_same_field (self,field):
         camels_on_field = [c for c in self.camle_list if c.field == field ] #and camel.position<c.position
-        camels_on_field.sort(key= camel.position)
+        camels_on_field.sort(key=lambda camel: camel.position)
         return camels_on_field
 
     def move_all_camels_to_new_field(self,list_camels,new_field):
@@ -145,90 +147,43 @@ class pyramide:
         #self.give_all_poistions()
 
     def calculate_probability(self):
-        times=1000000 
-        red_1 =0;red_2 =0; red_3 =0;red_4 =0;red_5 =0
-        green_1= 0;green_2= 0;green_3= 0;green_4= 0;green_5= 0
-        yellow_1=0;yellow_2=0;yellow_3=0;yellow_4=0;yellow_5=0
-        white_1=0;white_2=0;white_3=0;white_4=0;white_5=0
-        black_1=0; black_2=0; black_3=0; black_4=0; black_5=0
+        times=10000    #Adjust number of times U want to the programm to simulate outcomes of ur position (recommended 10000 in ca. 2,3s)
+        list_of_colors=["red","yellow","green","white","black"]
 
-        start=time.time()
+        counters= {f"{color}_{place}":0 for color in list_of_colors for place in range(5)}
 
+        start=time.time() 
+ 
         for i in range(times):
+
             self.run()
-            self.sort_for_best()
-            if self.camle_list[0].color == "red":
-                red_1+=1
-            elif self.camle_list[0].color == "yellow":
-                yellow_1+=1
-            elif self.camle_list[0].color == "green":
-                green_1+=1
-            elif self.camle_list[0].color == "white":
-                white_1+=1
-            elif self.camle_list[0].color == "black":
-                black_1+=1
-            if self.camle_list[1].color == "red":
-                red_2+=1
-            elif self.camle_list[1].color == "yellow":
-                yellow_2+=1
-            elif self.camle_list[1].color == "green":
-                green_2+=1
-            elif self.camle_list[1].color == "white":
-                white_2+=1
-            elif self.camle_list[1].color == "black":
-                black_2+=1
-            if self.camle_list[2].color == "red":
-                red_3+=1
-            elif self.camle_list[2].color == "yellow":
-                yellow_3+=1
-            elif self.camle_list[2].color == "green":
-                green_3+=1
-            elif self.camle_list[2].color == "white":
-                white_3+=1
-            elif self.camle_list[2].color == "black":
-                black_3+=1
-            if self.camle_list[3].color == "red":
-                red_4+=1
-            elif self.camle_list[3].color == "yellow":
-                yellow_4+=1
-            elif self.camle_list[3].color == "green":
-                green_4+=1
-            elif self.camle_list[3].color == "white":
-                white_4+=1
-            elif self.camle_list[3].color == "black":
-                black_4+=1
-            if self.camle_list[4].color == "red":
-                red_5+=1
-            elif self.camle_list[4].color == "yellow":
-                yellow_5+=1
-            elif self.camle_list[4].color == "green":
-                green_5+=1
-            elif self.camle_list[4].color == "white":
-                white_5+=1
-            elif self.camle_list[4].color == "black":
-                black_5+=1
+            self.sort_for_best()  
+            for place in range (5):
+                for color in list_of_colors:
+                    if self.camle_list[place].color== color:
+                        counters [f"{color}_{place}" ]+=1 
             
             self.load_safe()
-        print("Probability of First Place")
-        print("Red:",red_1/times,"  yellow:",yellow_1/times," green:",green_1/times,"   white:",white_1/times,"   black:",black_1/times)
-        print("Probability of Second Place")
-        print("Red:",red_2/times,"  yellow:",yellow_2/times," green:",green_2/times,"   white:",white_2/times,"   black:",black_2/times)
-        print("Probability of Third Place")
-        print("Red:",red_3/times,"  yellow:",yellow_3/times," green:",green_3/times,"   white:",white_3/times,"   black:",black_3/times)
-        print("Probability of Fourth Place")
-        print("Red:",red_4/times,"  yellow:",yellow_4/times," green:",green_4/times,"   white:",white_4/times,"   black:",black_4/times)
-        print("Probability of Fived Place")
-        print("Red:",red_5/times,"  yellow:",yellow_5/times," green:",green_5/times,"   white:",white_5/times,"   black:",black_5/times)
+
+        place_list=["First","Second","Third","Fourth","Fived"] #
+        for place in range (5):
+            print("") 
+            print("")
+            print (f"Probability of {place_list[place]} Place")
+            for color in list_of_colors:
+                count =counters[f"{color}_{place}"]/times 
+                print (f"{color}:",round(count,2)*100,"%",end=" ")
 
         end= time.time()
-        print("Calculated in",(end-start),"seconds")
+        print("")
+        print("Calculated in",(end-start),"seconds") 
 
     def sort_for_best(self): 
         self.camle_list.sort(key=lambda camel: (-camel.field, camel.position))   
 
 game =pyramide()
 #game.take_initial_input()
-#game.save_current_position()
+#game.save_current_position()  
 #game.load_safe()
 #game.give_all_poistions()
 #game.save_current_position()
