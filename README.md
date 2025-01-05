@@ -13,8 +13,6 @@ To-Do-list:
 
 #soll den besten Zug finden
 
-#implement the +1 and -1 things 
-#make money a point in caculation
 #winner and loser bets
 #hole bet portfolio 
 #streamline processro and ram usage 
