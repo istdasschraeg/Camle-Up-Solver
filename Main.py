@@ -113,17 +113,17 @@ class pyramide:  # The main class to handel the game logic
 
     def take_initial_input(self):  # Takes user inputs to initilise the game state
         for camel in self.camle_list:  # For each camel, take user inputs
-            camel_color = input(f"What camle was rolled?")  # Ask for the rolled cammel color
+            camel_color = input("What camle was rolled?")  # Ask for the rolled cammel color
             roll = input("Roll:")  # Ask for the roll result
             self.move(self.take_color_return_object(camel_color), roll)  # Move the camel based on input
-        input = input("Do any more fields have plus cards?y/n")  # Ask if there are +1 cards
-        while input == "y":  # While the answer is "yes"
+        input1 = input("Do any more fields have plus cards?y/n")  # Ask if there are +1 cards
+        while input1 == "y":  # While the answer is "yes"
             self.list_minus_one_fields.append(input("What field have plus cards on them"))  # Add the field to list
-            input = input("Do any more fields have plus cards?y/n")  # Ask again
-        input = input("Do any more fields have minus cards?y/n")  # Ask if there are -1 cards
-        while input == "y":  # While the answer is "yes"
+            input1 = input("Do any more fields have plus cards?y/n")  # Ask again
+        input2 = input("Do any more fields have minus cards?y/n")  # Ask if there are -1 cards
+        while input2 == "y":  # While the answer is "yes"
             self.list_minus_one_fields.append(input("What field have minus cards on them"))  # Add the field to list
-            input = input("Do any more fields have minus cards?y/n")  # Ask again
+            input2 = input("Do any more fields have minus cards?y/n")  # Ask again
         
     def take_color_return_object(self, color):  # Returns the cammel object based on its color
         match color:  # Match the given color to a camel
