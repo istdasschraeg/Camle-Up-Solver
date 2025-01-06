@@ -9,8 +9,6 @@ Im here to put an end to that by
 
 To-Do-list:
 
-# Soll wahrscheinlichkeit von würfeln aus der Pyramide erechen 
-
 #soll den besten Zug finden
 
 #winner and loser bets
@@ -19,7 +17,11 @@ To-Do-list:
 
 #Spielfeld nachmachen
 
+#remove all already down cards and also adjacent fields
+
 #input system für das spiel
 
 #controll rules are kept
 implemenitere fehler codes
+
+#something to modify the cards still in the game 

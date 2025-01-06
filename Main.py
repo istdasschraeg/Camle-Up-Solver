@@ -45,6 +45,11 @@ class pyramide:
 
         self.list_plus_one_fields=[]
         self.list_minus_one_fields=[]
+        self.list_potential_fields=[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+
+        #remove all already down cards and also adjacent fields
+
+        self.placements={f"{place+1}":0 for place in range(16)}
         
         pass 
  
@@ -73,7 +78,12 @@ class pyramide:
         for field in self.list_minus_one_fields:
             if new_field == field:
                 new_field-=1
+
+        for field in self.list_potential_fields:
+            if new_field == field:
+                self.placements[f"{field}"]+=1
                 
+
         return new_field
 
     def camels_on_same_field (self,field):
@@ -91,7 +101,7 @@ class pyramide:
                 camel.field = new_field
                 
                 camel.position = len([c for c in self.camle_list if c.field == new_field]) + i-1     
-    
+     
     def produce_dice(self):
         #print("Dice List:", len(self.dice_list))
         current_dice  = random.choice(self.dice_list)
@@ -153,7 +163,7 @@ class pyramide:
         self.dice_list = [self.dorange, self.dgreen, self.dyellow, self.dblue, self.dwhite] 
         #self.give_all_poistions()
 
-    def calculate_probability(self,times): 
+    def calculate_probability(self,times):    
         # runs the turn a number of times and uses that data to calculate the liklyhood of any given result
            #Adjust number of times U want to the programm to simulate outcomes of ur position (recommended 10000 in ca. 2,3s)
         list_of_colors=["orange","yellow","green","white","blue"] 
@@ -198,22 +208,40 @@ class pyramide:
         counters= {f"{color}_{place}":0 for color in list_of_colors for place in range(5)} #initialises varibales for storing the results 
 
         start=time.time() 
+        cardvalue= {"orange":5,"yellow":5,"green":5,"white":5,"blue":5}
+        expected_value = {"orange":0,"yellow":0,"green":0,"white":0,"blue":0,"card":0}
+        self.check_possible_fields()
  
         for i in range(times):
+            
 
             self.run()
             self.sort_for_best()  
             for place in range (5):
                 for color in list_of_colors:
                     if self.camle_list[place].color== color:
-                        counters [f"{color}_{place}" ]+=1 
+                        counters [f"{color}_{place}" ]+=1  
+
+
+            
+            #place card on field von 1-16 zählt wie oft da was raufgekommen ist
             
             self.load_safe()
 
-        #calulate the probability 
-        cardvalue= {"orange":5,"yellow":5,"green":5,"white":5,"blue":5}
-        expected_value = {"orange":0,"yellow":0,"green":0,"white":0,"blue":0}
+        for f in range(16):
+            if not self.placements[f"{f+1}"]==0: 
+                self.placements[f"{f+1}"] = self.placements[f"{f+1}"]/times
+                #print(self.placements[f"{f+1}"]/times)
+                
+                
 
+        max_key = max(self.placements, key=self.placements.get)
+
+        expected_value["card"] = self.placements[max_key]
+
+        print(expected_value["card"], "per turn value on field:", max_key)
+
+        
         for color in list_of_colors:
             probability_1 =counters[f"{color}_0"]/times
             probability_2 = counters[f"{color}_1"]/times
@@ -228,19 +256,20 @@ class pyramide:
         print("")
         print("Calculated in",(end-start),"seconds") 
 
+    def check_possible_fields(self):
+        unavailable_fields=[]
 
+        for f in self.list_minus_one_fields:
+            unavailable_fields.append(f,f+1,f-1)
 
+        for f in self.list_plus_one_fields:
+            unavailable_fields.append(f,f+1,f-1)
+        
+        for c in self.camle_list:
+            unavailable_fields.append(c.field)
 
-
-
-
-
-
-#something to modify the cards still in the game 
-
-
-
-
+        self.list_potential_fields = [f for f in self.list_potential_fields if f not in unavailable_fields]
+        #print(*self.list_potential_fields)   
 
 
 
