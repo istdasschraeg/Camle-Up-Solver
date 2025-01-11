@@ -21,7 +21,8 @@ class Camel:
         self.wurf = random.randint(1, 6)
 
 class Pyramide:
-    def __init__(self):
+    def __init__(self, root):
+        self.root = root
         self.dorange = Dice("1", "orange")
         self.dgreen = Dice("2", "green")
         self.dyellow = Dice("3", "yellow")
@@ -99,18 +100,51 @@ class Pyramide:
         return current_dice.colour
 
     def take_initial_input(self):
-        for camel in self.camel_list:
-            camel_color = input("What camel was rolled?")
-            roll = input("Roll:")
+        self.input_window = tk.Toplevel(self.root)
+        self.input_window.title("Initial Input")
+
+        self.camel_entries = []
+        self.roll_entries = []
+
+        for i in range(5):
+            camel_color_label = tk.Label(self.input_window, text=f"What camel was rolled? (Camel {i+1})")
+            camel_color_label.pack()
+            camel_color_entry = tk.Entry(self.input_window)
+            camel_color_entry.pack()
+            self.camel_entries.append(camel_color_entry)
+
+            roll_label = tk.Label(self.input_window, text=f"Roll: (Camel {i+1})")
+            roll_label.pack()
+            roll_entry = tk.Entry(self.input_window)
+            roll_entry.pack()
+            self.roll_entries.append(roll_entry)
+
+        self.plus_fields_label = tk.Label(self.input_window, text="Fields with plus cards (comma separated):")
+        self.plus_fields_label.pack()
+        self.plus_fields_entry = tk.Entry(self.input_window)
+        self.plus_fields_entry.pack()
+
+        self.minus_fields_label = tk.Label(self.input_window, text="Fields with minus cards (comma separated):")
+        self.minus_fields_label.pack()
+        self.minus_fields_entry = tk.Entry(self.input_window)
+        self.minus_fields_entry.pack()
+
+        self.submit_button = tk.Button(self.input_window, text="Submit", command=self.process_initial_input)
+        self.submit_button.pack()
+
+    def process_initial_input(self):
+        for i in range(5):
+            camel_color = self.camel_entries[i].get()
+            roll = self.roll_entries[i].get()
             self.move(self.take_color_return_object(camel_color), roll)
-        input1 = input("Do any more fields have plus cards?y/n")
-        while input1 == "y":
-            self.list_minus_one_fields.append(input("What field have plus cards on them"))
-            input1 = input("Do any more fields have plus cards?y/n")
-        input2 = input("Do any more fields have minus cards?y/n")
-        while input2 == "y":
-            self.list_minus_one_fields.append(input("What field have minus cards on them"))
-            input2 = input("Do any more fields have minus cards?y/n")
+
+        plus_fields = self.plus_fields_entry.get().split(',')
+        self.list_plus_one_fields.extend(int(field.strip()) for field in plus_fields if field.strip().isdigit())
+
+        minus_fields = self.minus_fields_entry.get().split(',')
+        self.list_minus_one_fields.extend(int(field.strip()) for field in minus_fields if field.strip().isdigit())
+
+        self.input_window.destroy()
 
     def take_color_return_object(self, color):
         match color:
@@ -238,8 +272,7 @@ class Pyramide:
 class CamelUpSolverApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Camel Up Solver")
-        self.game = Pyramide()
+        self.game = Pyramide(root)
 
         self.create_widgets()
 
