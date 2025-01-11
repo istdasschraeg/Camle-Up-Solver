@@ -290,5 +290,5 @@ class CamelUpSolverApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = CamelUpSolverApp(root)
+    app = CamelUpSolverApp(root) 
     root.mainloop()
